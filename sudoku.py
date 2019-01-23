@@ -1,4 +1,5 @@
 import math
+import time
 
 sudoku = [[0 for x in xrange(9)] for x in xrange(9)]
 
@@ -54,7 +55,7 @@ def check(x, y):
 
 
 def go_back(x, y):
-    global global_x_back, global_y_back
+    global sudoku
     if x < 0 or x > 9 or y < 0 or y > 9:
         print "out of bounds", x, y
         exit(1)
@@ -62,7 +63,6 @@ def go_back(x, y):
     if (x, y) in original_coords:
         if debug:
             print "Original coordinate detected", x, y
-        global_x_back += 1
         if x-1 < 0:
             if debug:
                 print "Edge coordinate detected", x, y
@@ -75,13 +75,11 @@ def go_back(x, y):
             print "Value", sudoku[x][y], "increased to", val, "on coord", x, y
         if val > 9:
             sudoku[x][y] = 0
-            global_x_back += 1
             if x == 0:
                 if debug:
                     print "Edge coordinate detected", x, y
                 y = y - 1
                 x = 9
-                global_y_back += 1
             go_back(x - 1, y)
         else:
             sudoku[x][y] = val
@@ -95,8 +93,9 @@ def go_back(x, y):
 
 
 def try_fill():
-    global original_coords, global_x_back, global_y_back
-    pointer = 0
+    global original_coords, sudoku
+    start = time.time()
+
     x = 0
     y = 0
     while y < 9:
@@ -109,28 +108,27 @@ def try_fill():
                     if check(x, y) is True:
                         if debug:
                             print "Add value", n, " to ", x, " ", y
-                        pointer += 1
                         if debug:
                             print_all(sudoku)
                         break
                     elif n == 9:
-                        #sudoku[x][y] = 0
                         if debug:
                             print "Can't add value to", x, y
-                        global_x_back = 0
-                        global_y_back = 0
                         go_back(x, y)
                         if debug:
                             print "All fixed, continuing on coords 0, 0"
-                        x =-1
+                        x = -1 # +1 at the end of the loop
                         y = 0
                         #exit(0)
             x += 1
 
         y += 1
         x = 0
-        #print_all(sudoku)
-    print "Done."
+
+    end = time.time()
+    print "Solved in ", end - start
+
+    return round(end - start, 3)
 
 
 def save_org_coords():
@@ -140,7 +138,7 @@ def save_org_coords():
             if sudoku[i][j] != 0:
                 original_coords.append((i, j))
 
-#izpisi(sudoku)
+#fill the starting numbers
 sudoku[8][0] = 1
 sudoku[0][1] = 9
 sudoku[3][1] = 3
