@@ -127,8 +127,16 @@ def try_fill():
 
     end = time.time()
     print "Solved in ", end - start
+    time_str = "Solved in " + str(round(end - start, 3))
+    return time_str
 
-    return round(end - start, 3)
+
+def final_check():
+    for y in range(9):
+        for x in range(9):
+            if check(x, y) is False:
+                return False
+    return True
 
 
 def save_org_coords():
@@ -139,6 +147,7 @@ def save_org_coords():
                 original_coords.append((i, j))
 
 #fill the starting numbers
+'''test numbers
 sudoku[8][0] = 1
 sudoku[0][1] = 9
 sudoku[3][1] = 3
@@ -170,11 +179,17 @@ sudoku[3][7] = 5
 sudoku[4][7] = 4
 sudoku[5][7] = 2
 sudoku[8][7] = 7
-sudoku[0][8] = 7
-print_all(sudoku)
-save_org_coords()
+sudoku[0][8] = 7'''
 
-#print original_coords
+def begin():
+    #print_all(sudoku)
+    save_org_coords()
 
-try_fill()
-print_all(sudoku)
+    #print original_coords
+
+    time = try_fill()
+    print_all(sudoku)
+
+    if final_check() is False:
+        time = "Sudoku unsolvable!"
+    return time
